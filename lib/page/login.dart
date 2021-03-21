@@ -13,14 +13,12 @@ class _LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
   bool invalidName = false;
   bool invalidPassword = false;
+  String wrongCredential = "";
 
   @override
   Widget build(BuildContext context) {
-    int statusCode = 0;
-    String responseBody = null;
-
     makePostRequest(body) async {
-      final uri = 'http://auslink.group/api/Account/login';
+      final uri = 'http://10.0.2.2:5000/admin-login';
       final headers = {'Content-Type': 'application/json'};
       String jsonBody = json.encode(body);
       final encoding = Encoding.getByName('utf-8');
@@ -31,10 +29,26 @@ class _LoginState extends State<Login> {
         body: jsonBody,
         encoding: encoding,
       );
+      var responseBody = json.decode(response.body);
 
-      statusCode = response.statusCode;
-      responseBody = response.body;
-      print(responseBody);
+      if (responseBody["state"] == 1) {
+        print("OK");
+        final storage = new FlutterSecureStorage();
+        await storage.write(key: 'accessToken', value: responseBody['token']);
+        await storage.write(
+            key: 'companyName',
+            value: responseBody['warehouse']['CompanyName']);
+        await storage.write(
+            key: 'countryName',
+            value: responseBody['warehouse']['CountryName']);
+        await storage.write(key: 'userName', value: responseBody['name']);
+
+        Navigator.pushNamed(context, '/home');
+      } else {
+        setState(() {
+          wrongCredential = "用户名或者密码错误！";
+        });
+      }
     }
 
     return Scaffold(
@@ -55,12 +69,17 @@ class _LoginState extends State<Login> {
                 Container(
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(10),
+                  child: Text('$wrongCredential'),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(10),
                   child: TextField(
                     controller: nameController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: '用户名',
-                      errorText: invalidName ? "用户名不正确" : null,
+                      errorText: invalidName ? "用户名不得为空" : null,
                     ),
                   ),
                 ),
@@ -72,7 +91,7 @@ class _LoginState extends State<Login> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "密码",
-                      errorText: invalidPassword ? "密码不正确" : null,
+                      errorText: invalidPassword ? "密码不得为空" : null,
                     ),
                   ),
                 ),
