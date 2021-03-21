@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
         Navigator.pushNamed(context, '/home');
       } else {
         setState(() {
-          wrongCredential = "用户名或者密码错误！";
+          wrongCredential = "用户名或者密码错误 ！";
         });
       }
     }

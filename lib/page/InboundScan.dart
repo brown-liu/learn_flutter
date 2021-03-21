@@ -22,19 +22,17 @@ class _InboundScan extends State<InboundScan> {
   double length = 0;
 
   void getData() async {
-    try{
+    try {
       Response response = await get("https://10.0.2.2:5001/test");
-    Map data = jsonDecode(response.body);
-    setState(() {
-      height = data['Width'];
-      width = data['Height'];
-      length = data['Length'];
-    });
-    }
-    catch(e){
+      Map data = jsonDecode(response.body);
+      setState(() {
+        height = data['Width'];
+        width = data['Height'];
+        length = data['Length'];
+      });
+    } catch (e) {
       print('error => $e');
     }
-    
 
     print(height);
   }
