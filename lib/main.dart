@@ -1,14 +1,31 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:learn_flutter/page/InboundScan.dart';
 import 'page/home.dart';
 import 'page/login.dart';
 import 'page/menu.dart';
+import 'page/InboundScan.dart';
+import 'dart:io';
+import 'dart:convert';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
+  HttpOverrides.global = new MyHttpOverrides();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,7 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
           routes: {
             '/home': (context) => Home(),
             '/login': (context) => Login(),
-            '/menu': (context) => Menu()
+            '/menu': (context) => Menu(),
+            '/inboundscan': (context) => InboundScan()
           },
         )
 
