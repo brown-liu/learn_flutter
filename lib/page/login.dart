@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     makePostRequest(body) async {
-      final uri = 'http://10.0.2.2:5000/admin-login';
+      final uri = 'http://auslink.group/api/mobile/admin-login';
       final headers = {'Content-Type': 'application/json'};
       String jsonBody = json.encode(body);
       final encoding = Encoding.getByName('utf-8');
@@ -29,8 +29,9 @@ class _LoginState extends State<Login> {
         body: jsonBody,
         encoding: encoding,
       );
-      var responseBody = json.decode(response.body);
 
+      var responseBody = json.decode(response.body);
+      print(responseBody);
       if (responseBody["state"] == 1) {
         print("OK");
         final storage = new FlutterSecureStorage();
